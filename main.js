@@ -1,16 +1,7 @@
 const drawToCanvas = (data) => {
-  drawImage(data, (canvas, ctx, image) => {
-    canvas.width = width;
-    canvas.height = width;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    // 设置字体大小
-    ctx.font = cellSize + "px Verdana";
-    const imageCells = cleanImage({ pixels, cellSize });
-    drawImageByCells({ canvas, ctx, imageCells, isClear: true });
-    const edgeImageCells = cleanEdgeImage({ pixels, cellSize });
-    drawImageByCells({ canvas, ctx, imageCells: edgeImageCells });
+  drawImage(data, (canvas, image) => {
+    window.rawImage = image;
+    filterImage(canvas, image);
   });
 };
 
@@ -54,6 +45,19 @@ const handleSaveFile = () => {
   });
 };
 
+const handleSelectSize = () => {
+  const select = e(".t-select-size");
+  select.addEventListener("change", (event) => {
+    let v = event.target.value;
+    e(".t-select-size").dataset.size = v;
+    window.cellSize = Number(v);
+    if (window.rawImage) {
+      const canvas = e(".t-canvas");
+      filterImage(canvas, rawImage);
+    }
+  });
+};
+
 const init = () => {
   const url = "https://grammyli.com/t/avatar/img/empty.29426768.png";
   const c = e(".t-canvas");
@@ -73,6 +77,7 @@ const handleEvents = () => {
   handleUploadFile();
   // 下载文件
   handleSaveFile();
+  handleSelectSize();
 };
 
 const __main = () => {

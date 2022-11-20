@@ -7,13 +7,12 @@ const e = (sel) => document.querySelector(sel);
 
 const drawImage = (data, callback) => {
   const c = e(".t-canvas");
-  const context = c.getContext("2d");
   c.width = width;
   c.height = width;
   const img = new Image();
   img.src = data;
   img.onload = () => {
-    callback(c, context, img);
+    callback(c, img);
   };
 };
 
@@ -37,7 +36,7 @@ const cleanImage = ({ pixels, cellSize }) => {
       const total = red + green + blue;
       const averageColorValue = total / 3;
       // const char = randomChar(averageColorValue);
-      const char = "l"
+      const char = "l";
       const color = "rgb(" + red + "," + green + "," + blue + ")";
       const cell = [x, y, char, color];
       imageCellArray.push(cell);
@@ -132,4 +131,19 @@ const drawImageByCells = ({ canvas, ctx, imageCells, isClear }) => {
     c.fillStyle = color;
     c.fillText(char, x, y);
   }
+};
+
+const filterImage = (canvas, image) => {
+  const ctx = canvas.getContext("2d");
+  canvas.width = width;
+  canvas.height = width;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+  const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  // 设置字体大小
+  ctx.font = cellSize + "px Verdana";
+  const imageCells = cleanImage({ pixels, cellSize });
+  drawImageByCells({ canvas, ctx, imageCells, isClear: true });
+  const edgeImageCells = cleanEdgeImage({ pixels, cellSize });
+  drawImageByCells({ canvas, ctx, imageCells: edgeImageCells });
 };
