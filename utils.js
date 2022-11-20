@@ -23,21 +23,29 @@ const randomChar = (value) => {
   return chars[index];
 };
 
+const getRgbByPosition = ({ pixels, x, y }) => {
+  const posX = x * 4;
+  const posY = y * 4;
+  const pos = posY * pixels.width + posX;
+  const red = pixels.data[pos];
+  const green = pixels.data[pos + 1];
+  const blue = pixels.data[pos + 2];
+  return [red, green, blue];
+};
+
+const formattedColor = ([red, green, blue]) => {
+  return `rgb(${red},${green},${blue})`;
+};
+
 const cleanImage = ({ pixels, cellSize }) => {
   const imageCellArray = [];
   for (let y = 0; y < pixels.height; y += cellSize) {
     for (let x = 0; x < pixels.width; x += cellSize) {
-      const posX = x * 4;
-      const posY = y * 4;
-      const pos = posY * pixels.width + posX;
-      const red = pixels.data[pos];
-      const green = pixels.data[pos + 1];
-      const blue = pixels.data[pos + 2];
-      const total = red + green + blue;
-      const averageColorValue = total / 3;
-      // const char = randomChar(averageColorValue);
-      const char = "l";
-      const color = "rgb(" + red + "," + green + "," + blue + ")";
+      const [red, green, blue] = getRgbByPosition({ pixels, x, y });
+      const averageColorValue = (red + green + blue) / 3;
+      const char = randomChar(averageColorValue);
+      // const char = "l";
+      const color = formattedColor([red, green, blue]);
       const cell = [x, y, char, color];
       imageCellArray.push(cell);
     }
@@ -81,12 +89,7 @@ const validPixel = (pixels, x, y, grayColor) => {
   const isWhitePoints = [];
   for (let i = 0; i < points.length; i++) {
     const [x1, y1] = points[i];
-    const posX = x1 * 4;
-    const posY = y1 * 4;
-    const pos = posY * w + posX;
-    const red = pixels.data[pos];
-    const green = pixels.data[pos + 1];
-    const blue = pixels.data[pos + 2];
+    const [red, green, blue] = getRgbByPosition({ pixels, x: x1, y: y1 });
     const gray = (red + green + blue) / 3;
     if (Math.abs(gray - grayColor) > 20) {
       isWhitePoints.push(points[i]);
@@ -99,14 +102,9 @@ const cleanEdgeImage = ({ pixels, cellSize }) => {
   for (let y = 0; y < pixels.height; y += cellSize) {
     for (let x = 0; x < pixels.width; x += cellSize) {
       const char = "*";
-      const posX = x * 4;
-      const posY = y * 4;
-      const pos = posY * pixels.width + posX;
-      const red = pixels.data[pos];
-      const green = pixels.data[pos + 1];
-      const blue = pixels.data[pos + 2];
+      const [red, green, blue] = getRgbByPosition({pixels, x, y})
       const grayColor = (red + green + blue) / 3;
-      const color = "rgb(" + red + "," + green + "," + blue + ")";
+      const color = formattedColor([red, green, blue]);
       const cell = [x, y, char, color];
       if (validPixel(pixels, x, y, grayColor)) {
         imageCellArray.push(cell);
@@ -140,7 +138,6 @@ const filterImage = (canvas, image) => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
   const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  // 设置字体大小
   ctx.font = cellSize + "px Verdana";
   const imageCells = cleanImage({ pixels, cellSize });
   drawImageByCells({ canvas, ctx, imageCells, isClear: true });
