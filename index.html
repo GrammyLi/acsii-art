@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>grammyli acsii art</title>
+    <link href="./styles.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="t-container">
+      <div class="t-btns">
+        <button class="t-upload-btn t-btn">
+          upload
+          <input class="t-upload" type="file" accept="image/*" />
+        </button>
+        <button class="t-save-btn t-btn">save</button>
+      </div>
+      <canvas class="t-canvas"></canvas>
+
+      <div class="t-field t-field-flag">
+        <div class="t-label">
+          flag:
+        </div>
+        <div class="t-value">
+          <select class="t-select-flag" data-flag="1">
+            <option value="1"> flag1 </option>
+            <option value="2"> flag2 </option>
+            <option value="3"> flag3 </option>
+            <option value="4"> flag4 </option>
+            <option value="5"> flag5 </option>
+            <option value="6"> flag6 </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <script src="./utils.js"></script>
+    <script src="./main.js"></script>
+  </body>
+</html>
